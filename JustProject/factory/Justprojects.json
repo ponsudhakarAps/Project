@@ -1,0 +1,9 @@
+{
+	"name": "Justprojects",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ff1207c7-157e-4c68-9f33-2ff1e344445c",
+		"tenantId": "820e2f06-2ab8-46a8-b7da-7b81a8f48673"
+	}
+}
