@@ -1,0 +1,48 @@
+{
+	"name": "scrdata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ProjectsLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "sample_sales.csv",
+				"container": "source"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ORDERID",
+				"type": "String"
+			},
+			{
+				"name": "SALES",
+				"type": "String"
+			},
+			{
+				"name": "STATUS",
+				"type": "String"
+			},
+			{
+				"name": "YEAR_ID",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMERNAME",
+				"type": "String"
+			}
+		]
+	}
+}
