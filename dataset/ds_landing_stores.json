@@ -1,0 +1,38 @@
+{
+	"name": "ds_landing_stores",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_st_orders",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "stores.json",
+				"container": "landing"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"STORE_ID": {
+					"type": "string"
+				},
+				"STORE_NAME": {
+					"type": "string"
+				},
+				"WEB_ADDRESS": {
+					"type": "string"
+				},
+				"LATITUDE": {
+					"type": "string"
+				},
+				"LONGITUDE": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
