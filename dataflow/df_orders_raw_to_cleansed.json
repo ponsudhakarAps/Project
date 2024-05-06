@@ -1,0 +1,286 @@
+{
+	"name": "df_orders_raw_to_cleansed",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_raw_order_items",
+						"type": "DatasetReference"
+					},
+					"name": "OrderItemsRaw"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_raw_customers",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersRaw"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_raw_product",
+						"type": "DatasetReference"
+					},
+					"name": "ProductsRaw"
+				},
+				{
+					"dataset": {
+						"referenceName": "dl_raw_stores",
+						"type": "DatasetReference"
+					},
+					"name": "StoresRaw"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_landing_orders",
+						"type": "DatasetReference"
+					},
+					"name": "OrdersRaw"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_cleansed_order_items",
+						"type": "DatasetReference"
+					},
+					"name": "OrderItemsCleansed"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_cleansed_customers",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersCleansed"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_cleansed_products",
+						"type": "DatasetReference"
+					},
+					"name": "ProductsCleansed"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_cleansed_stores",
+						"type": "DatasetReference"
+					},
+					"name": "StoresCleansed"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_cleansed_orders",
+						"type": "DatasetReference"
+					},
+					"name": "OrdersCleansed"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CastDataItems"
+				},
+				{
+					"name": "UpdatedTimeStampOrderItems"
+				},
+				{
+					"name": "DropLineItemId"
+				},
+				{
+					"name": "CastDataTypesCustomers"
+				},
+				{
+					"name": "UpdtaedTimeStampCustomers"
+				},
+				{
+					"name": "CastDataTypesProducts"
+				},
+				{
+					"name": "UpdatedTimeStamProducts"
+				},
+				{
+					"name": "CastDataTypesStores"
+				},
+				{
+					"name": "DropWebAddressandReorder"
+				},
+				{
+					"name": "UpdateTimeStamp"
+				},
+				{
+					"name": "OrderDateAndUpdatedTimeStamp"
+				},
+				{
+					"name": "CastDataTypesorders"
+				},
+				{
+					"name": "DropDateTimeAndReOrder"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_ID as short,",
+				"          LINE_ITEM_ID as short,",
+				"          PRODUCT_ID as short,",
+				"          UNIT_PRICE as double,",
+				"          QUANTITY as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OrderItemsRaw",
+				"source(output(",
+				"          CUSTOMER_ID as short,",
+				"          EMAIL_ADDRESS as string,",
+				"          FULL_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> CustomersRaw",
+				"source(output(",
+				"          PRODUCT_ID as short,",
+				"          PRODUCT_NAME as string,",
+				"          UNIT_PRICE as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> ProductsRaw",
+				"source(output(",
+				"          LATITUDE as double,",
+				"          LONGITUDE as double,",
+				"          STORE_ID as short,",
+				"          STORE_NAME as string,",
+				"          WEB_ADDRESS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> StoresRaw",
+				"source(output(",
+				"          ORDER_ID as string,",
+				"          ORDER_DATETIME as string,",
+				"          CUSTOMER_ID as string,",
+				"          ORDER_STATUS as string,",
+				"          STORE_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> OrdersRaw",
+				"OrderItemsRaw cast(output(",
+				"          ORDER_ID as integer,",
+				"          LINE_ITEM_ID as short,",
+				"          PRODUCT_ID as integer,",
+				"          UNIT_PRICE as double,",
+				"          QUANTITY as integer",
+				"     ),",
+				"     errors: true) ~> CastDataItems",
+				"CastDataItems derive(UPDATED_TIMESTAMP = currentUTC()) ~> UpdatedTimeStampOrderItems",
+				"UpdatedTimeStampOrderItems select(mapColumn(",
+				"          ORDER_ID,",
+				"          PRODUCT_ID,",
+				"          UNIT_PRICE,",
+				"          QUANTITY,",
+				"          UPDATED_TIMESTAMP",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropLineItemId",
+				"CustomersRaw cast(output(",
+				"          CUSTOMER_ID as integer,",
+				"          EMAIL_ADDRESS as string,",
+				"          FULL_NAME as string",
+				"     ),",
+				"     errors: true) ~> CastDataTypesCustomers",
+				"CastDataTypesCustomers derive(UPDATED_TIMESTAMP = currentUTC()) ~> UpdtaedTimeStampCustomers",
+				"ProductsRaw cast(output(",
+				"          PRODUCT_ID as integer,",
+				"          PRODUCT_NAME as string,",
+				"          UNIT_PRICE as double",
+				"     ),",
+				"     errors: true) ~> CastDataTypesProducts",
+				"CastDataTypesProducts derive(UPDATED_TIMESTAMP = currentUTC()) ~> UpdatedTimeStamProducts",
+				"StoresRaw cast(output(",
+				"          LATITUDE as double,",
+				"          LONGITUDE as double,",
+				"          STORE_ID as short,",
+				"          STORE_NAME as string,",
+				"          WEB_ADDRESS as string",
+				"     ),",
+				"     errors: true) ~> CastDataTypesStores",
+				"CastDataTypesStores select(mapColumn(",
+				"          STORE_ID,",
+				"          STORE_NAME,",
+				"          LATITUDE,",
+				"          LONGITUDE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropWebAddressandReorder",
+				"DropWebAddressandReorder derive(UPDATED_TIMESTAMP = currentUTC()) ~> UpdateTimeStamp",
+				"OrdersRaw derive(ORDER_DATE = toDate(ORDER_DATETIME,'dd-MMM-yy HH.ss.SS'),",
+				"          UPDATED_TIMESTAMP = currentUTC()) ~> OrderDateAndUpdatedTimeStamp",
+				"OrderDateAndUpdatedTimeStamp cast(output(",
+				"          ORDER_ID as integer,",
+				"          ORDER_DATETIME as string,",
+				"          CUSTOMER_ID as integer,",
+				"          ORDER_STATUS as string,",
+				"          STORE_ID as integer,",
+				"          ORDER_DATE as date,",
+				"          UPDATED_TIMESTAMP as timestamp",
+				"     ),",
+				"     errors: true) ~> CastDataTypesorders",
+				"CastDataTypesorders select(mapColumn(",
+				"          ORDER_ID,",
+				"          ORDER_DATE,",
+				"          CUSTOMER_ID,",
+				"          ORDER_STATUS,",
+				"          STORE_ID,",
+				"          UPDATED_TIMESTAMP",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropDateTimeAndReOrder",
+				"DropLineItemId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> OrderItemsCleansed",
+				"UpdtaedTimeStampCustomers sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CustomersCleansed",
+				"UpdatedTimeStamProducts sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ProductsCleansed",
+				"UpdateTimeStamp sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> StoresCleansed",
+				"DropDateTimeAndReOrder sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> OrdersCleansed"
+			]
+		}
+	}
+}
