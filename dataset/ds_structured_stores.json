@@ -1,34 +1,38 @@
 {
-	"name": "ds_cleansed_products",
+	"name": "ds_structured_stores",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_dl_orders",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "03 Cleansed"
+			"name": "04 Structured"
 		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Products",
-				"fileSystem": "cleansed"
+				"folderPath": "stores",
+				"fileSystem": "structured"
 			},
 			"compressionCodec": "snappy"
 		},
 		"schema": [
 			{
-				"name": "PRODUCT_ID",
-				"type": "INT32"
+				"name": "STORE_ID",
+				"type": "INT_16"
 			},
 			{
-				"name": "PRODUCT_NAME",
+				"name": "STORE_NAME",
 				"type": "UTF8"
 			},
 			{
-				"name": "UNIT_PRICE",
+				"name": "LATITUDE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "LONGITUDE",
 				"type": "DOUBLE"
 			},
 			{

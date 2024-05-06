@@ -1,20 +1,20 @@
 {
-	"name": "ds_cleansed_products",
+	"name": "ds_structured_products",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_dl_orders",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "03 Cleansed"
+			"name": "04 Structured"
 		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Products",
-				"fileSystem": "cleansed"
+				"folderPath": "products",
+				"fileSystem": "structured"
 			},
 			"compressionCodec": "snappy"
 		},
@@ -33,6 +33,10 @@
 			},
 			{
 				"name": "UPDATED_TIMESTAMP",
+				"type": "INT96"
+			},
+			{
+				"name": "UPDATED_TIMEsTAMP",
 				"type": "INT96"
 			}
 		]
